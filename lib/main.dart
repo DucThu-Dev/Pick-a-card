@@ -131,7 +131,10 @@ class _MainPageState extends State<MainPage> {
       final totalCard = creditCards.length;
       return widget.space * (totalCard + 1) + kCardHeight * totalCard;
     } else {
-      return kSpaceUnselectedCardToTop + kCardHeight + (creditCards.length - 2);
+      return kSpaceUnselectedCardToTop +
+          kCardHeight +
+          (creditCards.length - 2) * kSpaceBetweenUnselectCard +
+          kSpaceBetweenCard;
     }
   }
 
@@ -144,40 +147,42 @@ class _MainPageState extends State<MainPage> {
         title: const Text('PICK A CARD'),
       ),
       body: SizedBox.expand(
-        child: GestureDetector(
-          onVerticalDragEnd: (_) {
-            unSelectCard();
-          },
-          onVerticalDragStart: (_) {
-            unSelectCard();
-          },
-          child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                AnimatedContainer(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              AnimatedContainer(
+                duration: kAnimationDuration,
+                height: totalHeightTotalCard(),
+                width: mediaQuery.size.width,
+              ),
+              for (int i = 0; i < creditCards.length; i++)
+                AnimatedPositioned(
+                  top: _getCardTopPosititoned(i, i == selectedCardIndex),
                   duration: kAnimationDuration,
-                  height: totalHeightTotalCard(),
-                  width: mediaQuery.size.width,
-                ),
-                for (int i = 0; i < creditCards.length; i++)
-                  AnimatedPositioned(
-                    top: _getCardTopPosititoned(i, i == selectedCardIndex),
+                  child: AnimatedScale(
+                    scale: _getCardScale(i, i == selectedCardIndex),
                     duration: kAnimationDuration,
-                    child: AnimatedScale(
-                      scale: _getCardScale(i, i == selectedCardIndex),
-                      duration: kAnimationDuration,
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedCardIndex = i;
-                          });
-                        },
-                        child: creditCards[i],
-                      ),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedCardIndex = i;
+                        });
+                      },
+                      child: creditCards[i],
                     ),
                   ),
-              ],
-            ),
+                ),
+              if (selectedCardIndex != null)
+                Positioned.fill(
+                    child: GestureDetector(
+                  onVerticalDragEnd: (_) {
+                    unSelectCard();
+                  },
+                  onVerticalDragStart: (_) {
+                    unSelectCard();
+                  },
+                ))
+            ],
           ),
         ),
       ),
