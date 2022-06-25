@@ -6,4 +6,4 @@
 
 See [demo](https://ducthu-dev.github.io/Pick-a-card/).
 
-<img src="assets/source/pick_a_card.gif" height="480px">
+<img src="assets/source/pick_a_card.gif" height="300px" object-fit: cover;>
